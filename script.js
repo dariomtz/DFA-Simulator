@@ -3,95 +3,148 @@ let button = document.getElementById("run-afd");
 let output = document.getElementById("afd-output");
 let outputDiv = document.getElementById("afd-output-div");
 
-let actualAFD = null;
+let currentDFA = null;
 
 //P5
 let canvasDiv = document.getElementById("p5Canvas");
-
 let w = canvasDiv.getBoundingClientRect().width;
-let h = canvasDiv.getBoundingClientRect().height;
-console.log(w + " " + h);
-
+let nodes = [];
+let circlesDiameter;
 function setup() {
-  let canvas = createCanvas(w, 300);
+  let canvas = createCanvas(w, 400);
   canvas.parent("p5Canvas");
-
-  background(255);
+  circlesDiameter = 50;
+  //AQUI BETO GRACIAS QUe buena onda chiki LA NETA
+  background(190);
 }
 
 function draw() {
-  if (actualAFD) {
-    let totalNodes = actualAFD.transitionMatrix.length;
-    let margin = 50;
-    let workingSpace = width - 2 * margin;
-    let radius = height / 3;
-    for (let i = 0; i < totalNodes; i++) {
-      circle(
-        radius + margin + (workingSpace / totalNodes) * i,
-        height / 2,
-        radius
-      );
+  background(190);
+  translate(width / 2, height / 2);
+  if (currentDFA) {
+    connectNodes();
+    drawNodes();
+  } else {
+  }
+}
+
+function connectNodes() {
+  for (let i = 0; i < nodes.length; i++) {
+    for (let j = 0; j < currentDFA.lenguage.length; j++) {
+      if (currentDFA.transitionMatrix[i][j] !== i) {
+        let x1 = nodes[i].x;
+        let y1 = nodes[i].y;
+
+        let x2 = nodes[currentDFA.transitionMatrix[i][j]].x;
+        let y2 = nodes[currentDFA.transitionMatrix[i][j]].y;
+
+        line(x1, y1, x2, y2);
+      }
     }
+  }
+}
+
+function arrow(x1, y1, x2, y2) {
+  line(x1, y1, x2, y2);
+  angleMode(RADIANS);
+  let offset = 50;
+  push(); //start new drawing state
+  var angle = atan2(y1 - y2, x1 - x2); //gets the angle of the line
+  translate(x2, y2); //translates to the destination vertex
+  rotate(angle - HALF_PI); //rotates the arrow point
+  triangle(-offset * 0.5, offset, offset * 0.5, offset, 0, 0); //draws the arrow point as a triangle
+  pop();
+}
+function drawNodes() {
+  for (let i = 0; i < nodes.length; i++) {
+    circle(nodes[i].x, nodes[i].y, circlesDiameter);
+    rectMode(CENTER);
+    text(i, nodes[i].x, nodes[i].y);
+  }
+}
+
+function generateNodes() {
+  let totalNodes = currentDFA.transitionMatrix.length;
+  let margin = 5;
+  let diameter = height - 2 * margin;
+  let tetha = 365 / totalNodes;
+
+  angleMode(DEGREES);
+
+  for (let i = 0; i < totalNodes; i++) {
+    let x = (cos(tetha * i) * diameter) / 2;
+    let y = (sin(tetha * i) * diameter) / 2;
+    nodes.push({
+      x: x,
+      y: y,
+    });
   }
 }
 
 button.onclick = () => {
   output.innerText = "Processing...";
+
+  currentDFA = null;
+  nodes = [];
+
   let inputLines = textArea.value !== "" ? textArea.value.split("\n") : [];
-  if (inputLines.length >= 5) {
-    //Data validation
-    let inputString = inputLines[0];
+  if (inputLines.length < 5) {
+    wrongFormat();
+    return;
+  }
 
-    let lenguage = inputLines[1].split(";");
-    lenguage.pop();
+  //Data validation
+  let inputString = inputLines[0];
 
-    let startNode = Number(inputLines[2]);
+  let lenguage = inputLines[1].split(";");
+  lenguage.pop();
 
-    let endNodes = [];
-    inputLines[3].split(";").forEach((element) => {
-      if (element !== "") {
-        endNodes.push(Number(element));
-      }
+  let startNode = Number(inputLines[2]);
+
+  let endNodes = [];
+  inputLines[3].split(";").forEach((element) => {
+    if (element !== "") {
+      endNodes.push(Number(element));
+    }
+  });
+
+  transitionMatrix = [];
+  for (let y = 4; y < inputLines.length; y++) {
+    let newRow = [];
+    inputLines[y].split(";", inputLines[y].length).forEach((element) => {
+      newRow.push(Number(element));
     });
+    newRow.pop();
+    transitionMatrix.push(newRow);
+  }
 
-    transitionMatrix = [];
-    for (let y = 4; y < inputLines.length; y++) {
-      let newRow = [];
-      inputLines[y].split(";", inputLines[y].length).forEach((element) => {
-        newRow.push(Number(element));
-      });
-      newRow.pop();
-      transitionMatrix.push(newRow);
-    }
+  currentDFA = new AFD(lenguage, startNode, endNodes, transitionMatrix);
+  console.log(currentDFA);
+  generateNodes();
+  console.log(nodes);
 
-    actualAFD = new AFD(lenguage, startNode, endNodes, transitionMatrix);
-    console.log(actualAFD);
+  const { solution, isSolvable } = currentDFA.solve(inputString);
 
-    if (actualAFD.isSolvable(inputString, startNode)) {
-      output.innerText =
-        "Accepted. States: " + actualAFD.solveRecursive(inputString, startNode);
-      outputDiv.classList.remove("alert-primary");
-      outputDiv.classList.remove("alert-danger");
-      outputDiv.classList.remove("alert-warning");
-      outputDiv.classList.add("alert-success");
-    } else {
-      output.innerText = "Refused.";
-      outputDiv.classList.remove("alert-primary");
-      outputDiv.classList.remove("alert-success");
-      outputDiv.classList.remove("alert-warning");
-      outputDiv.classList.add("alert-danger");
-    }
-  } else if (textArea.value === "") {
-    output.innerText = "Empty.";
-    outputDiv.classList.remove("alert-primary");
-    outputDiv.classList.remove("alert-success");
-    outputDiv.classList.remove("alert-danger");
-    outputDiv.classList.add("alert-warning");
+  resetAlert();
+
+  if (isSolvable) {
+    output.innerText = "Accepted. States: " + solution;
+    outputDiv.classList.add("alert-success");
   } else {
-    output.innerText = "Wrong format.";
-    outputDiv.classList.remove("alert-primary");
-    outputDiv.classList.remove("alert-success");
-    outputDiv.classList.remove("alert-danger");
-    outputDiv.classList.add("alert-warning");
+    output.innerText = "Refused. States: " + solution;
+    outputDiv.classList.add("alert-danger");
   }
 };
+
+function wrongFormat() {
+  resetAlert();
+  output.innerText = "Wrong format.";
+  outputDiv.classList.add("alert-warning");
+}
+
+function resetAlert() {
+  outputDiv.classList.remove("alert-primary");
+  outputDiv.classList.remove("alert-danger");
+  outputDiv.classList.remove("alert-warning");
+  outputDiv.classList.remove("alert-success");
+}
