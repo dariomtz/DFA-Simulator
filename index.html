@@ -1,28 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-
-    <title>Hello!</title>
-    
-    <!-- import the webpage's stylesheet -->
-    <link rel="stylesheet" href="/style.css">
-    
-    <!-- import the webpage's javascript file -->
-    <script src="/script.js" defer></script>
-  </head>  
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
   <body>
-    <h1>Hi there!</h1>
-    
-    <p>
-      I'm your cool new webpage. Made with <a href="https://glitch.com">Glitch</a>!
-    </p>
+    <h1 class="text-center">AFD Simulator</h1>
+    <div class="container mx-auto">
+      <div class="card">
+        <div class="card-img-top" id="p5Canvas"></div>
+        <div class="card-body">
+          <div class="input-group">
+            <textarea
+              class="form-control"
+              name="Input"
+              id="afd-input"
+              cols="30"
+              rows="10"
+              autocomplete="off"
+              placeholder="AFD Input"
+            ></textarea>
+          </div>
+        </div>
+        <button id="run-afd" class="btn btn-primary">Process</button>
+      </div>
+    </div>
+    <div class="container">
+      <h2 class="row">Output</h2>
+      <div class="row alert alert-primary" id="afd-output-div">
+        <p id="afd-output">No AFD has been processed</p>
+      </div>
+    </div>
+    <div class="container">
+      <div class="row">
+        <div class="col">
+          <h2>Format</h2>
 
-    <!-- include the Glitch button to show what the webpage is about and
-          to make it easier for folks to view source and remix -->
-    <div class="glitchButton" style="position:fixed;top:20px;right:20px;"></div>
-    <script src="https://button.glitch.me/button.js" defer></script>
+          <p>
+            Input String<br />
+            Alphabet: Characters separated by semicolons <br />
+            Initial State <br />
+            Final states (semicolon separated) <br />
+            Matrix specifying the transition function. <br />
+          </p>
+        </div>
+      </div>
+      <div class="row card-deck">
+        <div class="card col">
+          <h3 class="card-header">Example (Accepted)</h3>
+          <img
+            src="https://cdn.glitch.com/2c74b573-a75f-41bd-9ffa-2c9eb155ef9b%2Faccepted-afd.png"
+            alt="AFD Example-Accepted"
+            width="500px"
+            height="200px"
+            class="card-img-top"
+          />
+          <p class="card-body alert alert-success">
+            aabcab<br />
+            a;b;c;<br />
+            0<br />
+            1;2;<br />
+            1;0;0;<br />
+            2;1;1;<br />
+            2;2;2;<br />
+          </p>
+        </div>
+        <div class="card col">
+          <h3 class="card-header">Example (Refused)</h3>
+          <img
+            src="https://cdn.glitch.com/2c74b573-a75f-41bd-9ffa-2c9eb155ef9b%2Frefused-afd.png"
+            alt="AFD Example-Refused"
+            width="500px"
+            height="200px"
+            class="card-img-top"
+          />
+          <p class="card-body alert alert-danger">
+            aabcab<br />
+            a;b;c;<br />
+            0<br />
+            1;<br />
+            1;0;0;<br />
+            2;1;1;<br />
+            2;2;2;<br />
+          </p>
+        </div>
+      </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/p5@1.1.9/lib/p5.js"></script>
+    <script src="script.js"></script>
+    <script src="afd.js"></script>
   </body>
 </html>
