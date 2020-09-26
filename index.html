@@ -13,8 +13,11 @@
     <link rel="stylesheet" href="style.css" />
   </head>
   <body>
-    <h1 class="text-center">AFD Simulator</h1>
-    <div class="container mx-auto">
+    <div class="navbar navbar-dark bg-dark shadow mb-5 d-flex justify-content-center">
+      <div class="navbar-brand">FDA Simulator</div>
+    </div>
+    
+    <div class="container">
       <div class="card">
         <div class="card-img-top" id="p5Canvas"></div>
         <div class="card-body">
@@ -30,15 +33,17 @@
             ></textarea>
           </div>
         </div>
-        <button id="run-afd" class="btn btn-primary">Process</button>
+        <button id="run-afd" class="btn btn-primary m-3">Process</button>
       </div>
     </div>
-    <div class="container">
+
+    <div class="container p-3">
       <h2 class="row">Output</h2>
       <div class="row alert alert-primary" id="afd-output-div">
         <p id="afd-output">No AFD has been processed</p>
       </div>
     </div>
+
     <div class="container">
       <div class="row">
         <div class="col">
@@ -53,8 +58,8 @@
           </p>
         </div>
       </div>
-      <div class="row card-deck">
-        <div class="card col">
+      <div class="row">
+        <div class="card col-md-6 col-12">
           <h3 class="card-header">Example (Accepted)</h3>
           <img
             src="https://cdn.glitch.com/2c74b573-a75f-41bd-9ffa-2c9eb155ef9b%2Faccepted-afd.png"
@@ -73,7 +78,7 @@
             2;2;2;<br />
           </p>
         </div>
-        <div class="card col">
+        <div class="card col-md-6 col-12">
           <h3 class="card-header">Example (Refused)</h3>
           <img
             src="https://cdn.glitch.com/2c74b573-a75f-41bd-9ffa-2c9eb155ef9b%2Frefused-afd.png"
