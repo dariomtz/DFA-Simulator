@@ -130,7 +130,7 @@ button.onclick = () => {
     output.innerText = "Accepted. States: " + solution;
     outputDiv.classList.add("alert-success");
   } else {
-    output.innerText = "Refused. States: " + solution;
+    output.innerText = "Rejected. States: " + solution;
     outputDiv.classList.add("alert-danger");
   }
 };
