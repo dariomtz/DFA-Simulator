@@ -14,7 +14,6 @@ function setup() {
   let canvas = createCanvas(w, 400);
   canvas.parent("p5Canvas");
   circlesDiameter = 50;
-  //AQUI BETO GRACIAS QUe buena onda chiki LA NETA
   background(190);
 }
 
@@ -30,7 +29,7 @@ function draw() {
 
 function connectNodes() {
   for (let i = 0; i < nodes.length; i++) {
-    for (let j = 0; j < currentDFA.lenguage.length; j++) {
+    for (let j = 0; j < currentDFA.language.length; j++) {
       if (currentDFA.transitionMatrix[i][j] !== i) {
         let x1 = nodes[i].x;
         let y1 = nodes[i].y;
@@ -118,7 +117,7 @@ button.onclick = () => {
     transitionMatrix.push(newRow);
   }
 
-  currentDFA = new AFD(lenguage, startNode, endNodes, transitionMatrix);
+  currentDFA = new DFA(lenguage, startNode, endNodes, transitionMatrix);
   console.log(currentDFA);
   generateNodes();
   console.log(nodes);
